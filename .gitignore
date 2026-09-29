@@ -1,0 +1,17 @@
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Local harness caches / installs (never the canonical skills/)
+.agents/
+.claude/
+.cursor/
+.codex/
+.gemini/
+.factory/
+
+# Editor / tooling
+.idea/
+.vscode/
+node_modules/
