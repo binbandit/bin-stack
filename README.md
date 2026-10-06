@@ -38,6 +38,8 @@ That links each skill directory into the harness roots you already have (`~/.age
 | [`babysit-pr`](skills/babysit-pr/SKILL.md) | Monitor a PR through review bots and CI |
 | [`arena`](skills/arena/SKILL.md) | Run competing attempts, then graft the strongest ideas into one result |
 | [`bro`](skills/bro/SKILL.md) | Restate the last message in plain language |
+| [`verify`](skills/verify/SKILL.md) | Prove a behavior change on the user surface with revision-bound evidence |
+| [`review`](skills/review/SKILL.md) | Filter adversarial findings by reachable failure and concrete evidence |
 
 ## Layout
 
@@ -47,6 +49,8 @@ skills/
   babysit-pr/SKILL.md
   arena/SKILL.md
   bro/SKILL.md
+  verify/SKILL.md
+  review/SKILL.md
 scripts/
   link-skills.sh   # optional: symlink into local harness skill roots
 ```
@@ -65,3 +69,5 @@ See [agentskills.io/specification](https://agentskills.io/specification).
 ## License
 
 MIT
+
+The `verify` and `review` skills adapt selected pstack guidance by Lauren Tan at revision `9f451cf875ad1239912762f67741e8e5ba6ac0f1`. Each skill bundles its provenance and the original MIT notice in `LICENSE-pstack` so attribution travels with individual skill installs.
