@@ -13,7 +13,9 @@ All the repos we work in have various AI review bots. They're helpful, even if t
 
 If your harness offers tools to monitor a PR, use them so you can respond when comments arrive. Otherwise poll the PR for new comments and checks.
 
-Only act on checks and comments newer than the latest push. Ignore your own "AI reply on behalf of Brayden" comments. After you push a fix, wait for bots on that new commit before answering again.
+Use checks and bot reviews tied to the exact current PR HEAD to decide readiness; their timestamps alone do not prove they cover it. Ignore your own "AI reply on behalf of Brayden" comments as new reviewer feedback. After you push a fix, wait for bots on that new commit before answering again.
+
+Read thread resolution and any explicit reviewer withdrawal, and verify unresolved findings against current HEAD regardless of when they were posted. An old timestamp or outdated line location alone is not grounds for dismissal. Carry findings forward until they are addressed and verified on current HEAD, explicitly withdrawn by the reviewer, or demonstrably false or obsolete with a written reason. Do not repeat replies or fixes for resolved threads unless the issue remains or recurs on current HEAD.
 
 Verify every bot finding against the source before changing code. Fix real findings, then commit and push. Rerun an infrastructure flake and leave the code alone. Reply with a written reason when dismissing a false positive.
 
@@ -38,5 +40,5 @@ Do not let review feedback expand the PR beyond the user's original goal.
 Address real shortcomings, but avoid scope creep.
 
 If nothing has changed, stay quiet rather than posting filler comments.
-Stop when the review bots and required checks are green on the latest commit.
+Stop when the review bots and required checks are green on the latest commit and no actionable findings remain.
 Merge only when the user explicitly requested it; otherwise report that the PR is ready.
