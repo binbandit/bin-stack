@@ -21,6 +21,7 @@ CANDIDATE_ROOTS=(
   "$HOME/.gemini/skills"
   "$HOME/.factory/skills"
   "$HOME/.grok/skills"
+  "$HOME/.pi/agent/skills"
 )
 
 link_skill() {
