@@ -48,7 +48,11 @@ Claude Code mods: plugins of function hooks that change how Claude Code looks an
 | Mod | What it does |
 | --- | --- |
 | [`glamour-dark`](mods/glamour-dark) | Draws replies as rich markdown in glamour's dark style, one sentence per line |
+| [`marathon-footer`](mods/marathon-footer) | Restyles the hints after the mode label under the prompt to match the SLOPOTHON banner: `⏵⏵ auto mode on · ⇧⇥ CYCLE  //  ← 1 AGENT` |
+| [`redact-secrets`](mods/redact-secrets) | Swaps secrets for placeholders before Claude reads them or the session logs them; Write and Edit put the real values back |
 | [`tool-lines`](mods/tool-lines) | Draws each tool call as one compact line and hides its result block |
+| [`ascii-spinner`](mods/ascii-spinner) | Swaps the working line (verb, timer, tokens, effort, tip) for a one-row WEAVEworm rethreading synthsilk, in Sekiguchi colors |
+| [`slopothon`](mods/slopothon) | Paints a SLOPOTHON lockup over the Claude logo in Marathon's design language: block wordmark, a dot-matrix card naming the model and branch, and a livery strip with a tagline and barcode per session. Fullscreen (`"tui": "fullscreen"`) only; it starts each session with a `/slopothon` row and the logo shows for ~130ms first. Type `/slopothon` to redraw it inline |
 
 Install every mod at user scope:
 
@@ -71,7 +75,11 @@ skills/
 mods/
   .claude-plugin/marketplace.json
   glamour-dark/
+  marathon-footer/
+  redact-secrets/
   tool-lines/
+  ascii-spinner/
+  slopothon/
 scripts/
   link-skills.sh   # optional: symlink into local harness skill roots
   install-mods.sh  # install the Claude Code mods

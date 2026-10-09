@@ -1,0 +1,4 @@
+{
+  "description": "The marathon-footer hooks module",
+  "modules": ["./register.ts"]
+}

@@ -4,6 +4,10 @@
   "description": "Claude Code mods from bin-stack",
   "plugins": [
     { "name": "glamour-dark", "source": "./glamour-dark" },
-    { "name": "tool-lines", "source": "./tool-lines" }
+    { "name": "marathon-footer", "source": "./marathon-footer" },
+    { "name": "redact-secrets", "source": "./redact-secrets" },
+    { "name": "tool-lines", "source": "./tool-lines" },
+    { "name": "ascii-spinner", "source": "./ascii-spinner" },
+    { "name": "slopothon", "source": "./slopothon" }
   ]
 }

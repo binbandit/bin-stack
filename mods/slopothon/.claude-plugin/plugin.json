@@ -1,0 +1,5 @@
+{
+  "name": "slopothon",
+  "version": "0.1.0",
+  "description": "Draws a Marathon-style SLOPOTHON banner above the prompt until the first prompt is sent"
+}

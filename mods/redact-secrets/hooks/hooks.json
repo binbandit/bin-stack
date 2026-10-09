@@ -1,0 +1,4 @@
+{
+  "description": "The redact-secrets hooks module",
+  "modules": ["./register.ts"]
+}

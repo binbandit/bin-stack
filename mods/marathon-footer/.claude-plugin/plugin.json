@@ -1,0 +1,5 @@
+{
+  "name": "marathon-footer",
+  "version": "0.1.0",
+  "description": "Restyles the hints after the mode label under the prompt to match the SLOPOTHON banner: '⇧⇥ CYCLE  //  ← 1 AGENT'"
+}
