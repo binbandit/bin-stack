@@ -41,6 +41,23 @@ That links each skill directory into the harness roots you already have (`~/.age
 | [`verify`](skills/verify/SKILL.md) | Prove a behavior change on the user surface with revision-bound evidence |
 | [`review`](skills/review/SKILL.md) | Filter adversarial findings by reachable failure and concrete evidence |
 
+## Mods
+
+Claude Code mods: plugins of function hooks that change how Claude Code looks and behaves. They are Claude Code only.
+
+| Mod | What it does |
+| --- | --- |
+| [`glamour-dark`](mods/glamour-dark) | Draws replies as rich markdown in glamour's dark style, one sentence per line |
+| [`tool-lines`](mods/tool-lines) | Draws each tool call as one compact line and hides its result block |
+
+Install every mod at user scope:
+
+```bash
+./scripts/install-mods.sh
+```
+
+The script adds `mods/` as the `bin-stack` marketplace and installs each mod from it. Claude Code reads the mods in place from this clone, so an edit here applies on the next session or `/reload-plugins`. Re-run it after adding a mod.
+
 ## Layout
 
 ```
@@ -51,8 +68,13 @@ skills/
   bro/SKILL.md
   verify/SKILL.md
   review/SKILL.md
+mods/
+  .claude-plugin/marketplace.json
+  glamour-dark/
+  tool-lines/
 scripts/
   link-skills.sh   # optional: symlink into local harness skill roots
+  install-mods.sh  # install the Claude Code mods
 ```
 
 Canonical skills live in `skills/`. Harness-specific paths are adapters (symlinks or CLI installs), not forks of the content.

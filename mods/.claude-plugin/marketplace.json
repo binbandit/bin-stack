@@ -1,0 +1,9 @@
+{
+  "name": "bin-stack",
+  "owner": { "name": "binbandit" },
+  "description": "Claude Code mods from bin-stack",
+  "plugins": [
+    { "name": "glamour-dark", "source": "./glamour-dark" },
+    { "name": "tool-lines", "source": "./tool-lines" }
+  ]
+}

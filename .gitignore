@@ -11,6 +11,9 @@
 .gemini/
 .factory/
 
+# Types the engine lays beside a mod it loads from its folder
+mods/*/.claude-plugin/types/
+
 # Editor / tooling
 .idea/
 .vscode/

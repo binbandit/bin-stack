@@ -26,6 +26,18 @@ Canonical path: `skills/<skill-name>/SKILL.md`.
 3. Update the skills table in `README.md`.
 4. If you add scripts, document how to run them and what they need.
 
+## Adding a mod
+
+Claude Code mods live in `mods/<name>/` and are Claude Code only.
+
+1. Create `mods/<name>/.claude-plugin/plugin.json`, `hooks/hooks.json` and `hooks/register.ts`.
+2. List it in `mods/.claude-plugin/marketplace.json`.
+3. Update the mods table in `README.md`.
+4. Check it with `claude plugin validate mods/<name>` and `claude plugin test mods/<name>`.
+5. Install it with `./scripts/install-mods.sh`.
+
+Mod code carries no comments. Names and structure carry the meaning; if code needs a comment to be understood, rewrite it.
+
 ## Linking locally
 
 `./scripts/link-skills.sh` symlinks every skill directory into discovered user-level harness skill roots. Re-run after adding a skill.
