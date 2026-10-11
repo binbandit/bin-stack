@@ -1,4 +1,0 @@
-{
-  "description": "The slopothon-footer hooks module",
-  "modules": ["./register.ts"]
-}

@@ -18,3 +18,4 @@ mods/*/.claude-plugin/types/
 .idea/
 .vscode/
 node_modules/
+__pycache__/

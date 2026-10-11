@@ -34,7 +34,7 @@ Claude Code mods live in `mods/<name>/` and are Claude Code only.
 2. List it in `mods/.claude-plugin/marketplace.json`.
 3. Update the mods table in `README.md`.
 4. Check it with `claude plugin validate mods/<name>` and `claude plugin test mods/<name>`.
-5. Install it with `./scripts/install-mods.sh`.
+5. Install it with `./scripts/install-mods.sh <name>`.
 
 Mod code carries no comments. Names and structure carry the meaning; if code needs a comment to be understood, rewrite it.
 
