@@ -48,19 +48,21 @@ Claude Code mods: plugins of function hooks that change how Claude Code looks an
 | Mod | What it does |
 | --- | --- |
 | [`glamour-dark`](mods/glamour-dark) | Draws replies as rich markdown in glamour's dark style, one sentence per line |
-| [`slopothon-footer`](mods/slopothon-footer) | Restyles the hints after the mode label under the prompt to match the SLOPOTHON banner: `⏵⏵ auto mode on · ⇧⇥ CYCLE  //  ← 1 AGENT` |
 | [`redact-secrets`](mods/redact-secrets) | Swaps secrets for placeholders before Claude reads them or the session logs them; Write and Edit put the real values back |
 | [`tool-lines`](mods/tool-lines) | Draws each tool call as one compact line and hides its result block |
 | [`ascii-spinner`](mods/ascii-spinner) | Swaps the working line (verb, timer, tokens, effort, tip) for a one-row WEAVEworm rethreading synthsilk, in Sekiguchi colors |
 | [`slopothon`](mods/slopothon) | Paints a SLOPOTHON lockup over the Claude logo: block wordmark, a dot-matrix card naming the model and branch, and a livery strip with a tagline and barcode per session. Fullscreen (`"tui": "fullscreen"`) only; it starts each session with a `/slopothon` row and the logo shows for ~130ms first. Type `/slopothon` to redraw it inline |
 
-Install every mod at user scope:
+Install specific mods at user scope (requires Claude Code on `PATH` and Python 3):
 
 ```bash
-./scripts/install-mods.sh
+./scripts/install-mods.sh --list
+./scripts/install-mods.sh glamour-dark tool-lines
 ```
 
-The script adds `mods/` as the `bin-stack` marketplace and installs each mod from it. Claude Code reads the mods in place from this clone, so an edit here applies on the next session or `/reload-plugins`. Re-run it after adding a mod.
+The script validates every requested name before changing anything, adds `mods/` as the `bin-stack` marketplace, and installs only the named mods. No arguments prints usage and exits without installing anything; `--list` lists available names without making changes. Duplicate names are installed once per invocation, and re-running an install is safe. Claude Code reads the mods in place from this clone, so an edit here applies on the next session or `/reload-plugins`.
+
+Run the installer's isolated fixture tests with `python3 -m unittest discover -s scripts/tests -v`.
 
 ## Layout
 
@@ -75,14 +77,13 @@ skills/
 mods/
   .claude-plugin/marketplace.json
   glamour-dark/
-  slopothon-footer/
   redact-secrets/
   tool-lines/
   ascii-spinner/
   slopothon/
 scripts/
   link-skills.sh   # optional: symlink into local harness skill roots
-  install-mods.sh  # install the Claude Code mods
+  install-mods.sh  # install named Claude Code mods
 ```
 
 Canonical skills live in `skills/`. Harness-specific paths are adapters (symlinks or CLI installs), not forks of the content.
