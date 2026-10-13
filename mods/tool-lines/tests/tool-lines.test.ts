@@ -15,8 +15,9 @@ const BASH_ROW = {
   output: { stdout: 'a\nb\nc', stderr: 'Shell cwd was reset to /repo', interrupted: false },
 }
 
+// The line's no-break space reads as the space the terminal paints.
 function flattenedText(node: unknown): string {
-  if (typeof node === 'string') return node
+  if (typeof node === 'string') return node.replaceAll(' ', ' ')
   if (typeof node !== 'object' || node === null) return ''
   const children = (node as { children?: unknown[] }).children ?? []
   return children.map(flattenedText).join('')
@@ -179,4 +180,66 @@ test('hides the result block', async $ => {
     viewport: { columns: 200, rows: 50 },
   })
   expect(flattenedText(await ui.drawn())).toBe('')
+})
+
+test('opens a grouped call on a press to show what the tool returned, and closes it on the next', async ($, on) => {
+  on('ui.render', () => ENGINE_DRAWING)
+  const row = { ...BASH_ROW, tool_use_id: 'toolu_grouped' }
+  const returned = 'a\tb\nc\n<system-reminder>for the model only</system-reminder>'
+  on('session.messages', () => ({
+    value: [{ role: 'assistant', text: '', toolUses: [{ ...row, input: row.input, text: returned }] }],
+  }))
+  const viewport = { columns: 200, rows: 50 }
+  await $.ui.mount({
+    plugin: 'tool-lines',
+    surface: 'terminal',
+    component: 'ToolGroup',
+    props: { calls: [row], isActive: false, isExpanded: false },
+    viewport,
+  })
+  const ui = await $.ui.mount({
+    plugin: 'tool-lines',
+    surface: 'terminal',
+    component: 'ToolUse',
+    requestId: row.tool_use_id,
+    props: row,
+    viewport,
+  })
+  const resultRows = async () =>
+    (await ui.findAll({ type: 'Button' })).filter(button => button.key?.startsWith('result-')).map(button => button.text)
+
+  expect(await resultRows()).toEqual([])
+  await ui.press({ key: 'summary' })
+  expect(await resultRows()).toEqual(['a  b', 'c'])
+  await ui.press({ key: 'result-1' })
+  expect(await resultRows()).toEqual([])
+})
+
+test('opens a standalone call on a press to its whole input and the engine result beneath', async ($, on) => {
+  on('ui.render', () => ENGINE_DRAWING)
+  const path = `/repo/${'nested/'.repeat(8)}costs.ts`
+  const row = { ...BASH_ROW, tool_use_id: 'toolu_edit', tool: 'Edit', input: { file_path: path }, output: {} }
+  const viewport = { columns: 200, rows: 50 }
+  const call = await $.ui.mount({
+    plugin: 'tool-lines',
+    surface: 'terminal',
+    component: 'ToolUse',
+    requestId: row.tool_use_id,
+    props: row,
+    viewport,
+  })
+  const result = await $.ui.mount({
+    plugin: 'tool-lines',
+    surface: 'terminal',
+    component: 'ToolResult',
+    requestId: row.tool_use_id,
+    props: { tool_use_id: row.tool_use_id, tool: row.tool, output: row.output, isErrored: false },
+    viewport,
+  })
+
+  expect(await summaryLineOf(call)).toMatch(/…\)$/)
+  expect(flattenedText(await result.drawn())).toBe('')
+  await call.press({ key: 'summary' })
+  expect(await summaryLineOf(call)).toBe(`tool_call: Edit(${path})`)
+  expect(flattenedText(await result.drawn())).toBe('engine')
 })

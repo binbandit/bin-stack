@@ -1,5 +1,6 @@
 {
   "name": "tool-lines",
   "version": "0.1.0",
-  "description": "Draws each tool call as one compact 'tool_call: Tool(input) - meta' line and hides its result block"
+  "description": "Draws each tool call as one compact 'tool_call: Tool(input) - meta' line that a click opens to its result and closes again",
+  "types": "./types/index.d.ts"
 }
