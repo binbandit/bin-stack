@@ -40,6 +40,17 @@ That links each skill directory into the harness roots you already have (`~/.age
 | [`bro`](skills/bro/SKILL.md) | Restate the last message in plain language |
 | [`verify`](skills/verify/SKILL.md) | Prove a behavior change on the user surface with revision-bound evidence |
 | [`review`](skills/review/SKILL.md) | Filter adversarial findings by reachable failure and concrete evidence |
+| [`anatomy`](skills/anatomy/SKILL.md) | Build detailed, interactive isometric illustrations that explain technical ideas as physical machines |
+
+`anatomy` includes its rendering kit, reference guides, examples, and helper scripts. It needs Node.js 20.10+; browser checks also need Chrome or Chromium (set `CHROME_PATH` if it is not in a standard location). Build and capture the smallest example from the skill directory:
+
+```bash
+cd skills/anatomy
+node examples/dial-indicator/build.mjs --light
+node scripts/capture.mjs examples/dial-indicator/dial-indicator-light.html --out /tmp/anatomy-preview.png
+```
+
+See [`anatomy`'s setup](skills/anatomy/SKILL.md#setup) and [verification guide](skills/anatomy/references/verify.md) for the other script commands.
 
 ## Mods
 
@@ -49,7 +60,7 @@ Claude Code mods: plugins of function hooks that change how Claude Code looks an
 | --- | --- |
 | [`glamour-dark`](mods/glamour-dark) | Draws replies as rich markdown in glamour's dark style, one sentence per line |
 | [`redact-secrets`](mods/redact-secrets) | Swaps secrets for placeholders before Claude reads them or the session logs them; Write and Edit put the real values back |
-| [`tool-lines`](mods/tool-lines) | Draws each tool call as one compact line and hides its result block |
+| [`tool-lines`](mods/tool-lines) | Draws each tool call as one compact line; click a call to open its result, click it again to close it |
 | [`ascii-spinner`](mods/ascii-spinner) | Swaps the working line (verb, timer, tokens, effort, tip) for a one-row WEAVEworm rethreading synthsilk, in Sekiguchi colors |
 | [`slopothon`](mods/slopothon) | Paints a SLOPOTHON lockup over the Claude logo: block wordmark, a dot-matrix card naming the model and branch, and a livery strip with a tagline and barcode per session. Fullscreen (`"tui": "fullscreen"`) only; it starts each session with a `/slopothon` row and the logo shows for ~130ms first. Type `/slopothon` to redraw it inline |
 
@@ -74,6 +85,7 @@ skills/
   bro/SKILL.md
   verify/SKILL.md
   review/SKILL.md
+  anatomy/        # SKILL.md, kit, references, examples, and helper scripts
 mods/
   .claude-plugin/marketplace.json
   glamour-dark/
@@ -102,3 +114,5 @@ See [agentskills.io/specification](https://agentskills.io/specification).
 MIT
 
 The `verify` and `review` skills adapt selected pstack guidance by Lauren Tan at revision `9f451cf875ad1239912762f67741e8e5ba6ac0f1`. Each skill bundles its provenance and the original MIT notice in `LICENSE-pstack` so attribution travels with individual skill installs.
+
+The `anatomy` skill is imported from [wheresryan22/anatomy](https://github.com/wheresryan22/anatomy) at revision `689dcf966e63d92be10a5d593c6e19e10acd4422`. Its [source notes](skills/anatomy/SOURCE.md) and original [MIT license](skills/anatomy/LICENSE) travel with individual skill installs.
