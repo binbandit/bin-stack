@@ -116,6 +116,7 @@ type TranscriptEntry = { uuid: string; parent: string | null; kind: EntryKind }
 let run: Run | undefined
 let anchor: Anchor | undefined
 let resumedAnchor: Anchor | undefined
+let isInteractive = false
 const notices = new Map<string, Notice>()
 
 const FAMILIES = 'fable|mythos|opus|sonnet|haiku'
@@ -343,7 +344,7 @@ async function settleBanner($: EngineInterface, cwd: string, start: 'startup' | 
     $.command.register({ name: COMMAND, description: 'Draw the SLOPOTHON banner' }),
   ])
   const bootIndex = messages.findIndex(isBootRecord)
-  const isBooting = start !== 'resume' && bootIndex === -1 && settings.tui === 'fullscreen' && (start === 'clear' || messages.length === 0)
+  const isBooting = isInteractive && start !== 'resume' && bootIndex === -1 && settings.tui === 'fullscreen' && (start === 'clear' || messages.length === 0)
   const recordsAbove = bootIndex === -1 ? messages.length : bootIndex
   const hasBanner = (isBooting || bootIndex !== -1) && messages.slice(0, recordsAbove).every(isCommandRecord)
   const showRun = (branch: string | undefined) => {
@@ -358,6 +359,7 @@ async function settleBanner($: EngineInterface, cwd: string, start: 'startup' | 
 
 export const register: Register = on => {
   on('session.start', async ($, e, next) => {
+    isInteractive = e.isInteractive
     await settleBanner($, e.cwd, 'startup')
     return next(e)
   })

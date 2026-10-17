@@ -41,7 +41,19 @@ function answerSession(
 
 const startSession = ($: Engine) => $.session.start({ cwd: '/home/runner/code/app', surface: 'terminal', isInteractive: true })
 
-const startAfterClear = ($: Engine) => $.classic.SessionStart({ source: 'clear', cwd: '/home/runner/code/app' })
+const startSdkSession = ($: Engine) => $.session.start({ cwd: '/home/runner/code/app', surface: null, isInteractive: false })
+
+const clear = ($: Engine) => $.classic.SessionStart({ source: 'clear', cwd: '/home/runner/code/app' })
+
+const startAfterClear = async ($: Engine) => {
+  await startSession($)
+  await clear($)
+}
+
+const startSdkAfterClear = async ($: Engine) => {
+  await startSdkSession($)
+  await clear($)
+}
 
 const resume = async ($: Engine) => {
   await $.classic.SessionStart({ source: 'resume', cwd: '/home/runner/code/app', transcript_path: '/home/runner/.claude/projects/app/s.jsonl' })
@@ -331,6 +343,8 @@ const BOOT_CASES: [name: string, session: Session, start: (engine: Engine) => Pr
   ['a resumed session', { messages: [PROMPT] }, startSession, []],
   ['a resumed session that already has its banner', { messages: [BOOT_RECORD, PROMPT] }, startSession, []],
   ['a main-screen session', { tui: 'default' }, startSession, []],
+  ['an SDK session', {}, startSdkSession, []],
+  ['an SDK session /clear just emptied', { messages: [CLEAR_RECORD] }, startSdkAfterClear, []],
 ]
 
 for (const [name, session, start, runs] of BOOT_CASES) {
