@@ -41,6 +41,7 @@ That links each skill directory into the harness roots you already have (`~/.age
 | [`verify`](skills/verify/SKILL.md) | Prove a behavior change on the user surface with revision-bound evidence |
 | [`review`](skills/review/SKILL.md) | Filter adversarial findings by reachable failure and concrete evidence |
 | [`anatomy`](skills/anatomy/SKILL.md) | Build detailed, interactive isometric illustrations that explain technical ideas as physical machines |
+| [`use-codex`](skills/use-codex/SKILL.md) | Hand work to GPT through the Codex CLI (`codex exec` / `codex review`), via a thin wrapper agent in Claude Code |
 
 `anatomy` includes its rendering kit, reference guides, examples, and helper scripts. It needs Node.js 20.10+; browser checks also need Chrome or Chromium (set `CHROME_PATH` if it is not in a standard location). Build and capture the smallest example from the skill directory:
 
@@ -86,6 +87,7 @@ skills/
   verify/SKILL.md
   review/SKILL.md
   anatomy/        # SKILL.md, kit, references, examples, and helper scripts
+  use-codex/SKILL.md
 mods/
   .claude-plugin/marketplace.json
   glamour-dark/
