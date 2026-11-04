@@ -28,27 +28,30 @@ directly from the shell.
 | `isolation` | `worktree` for parallel **implementation** |
 | `schema` | optional, structured return |
 
+The wrapper's `effort: low` is Claude effort; Codex reasoning effort is set
+separately in the commands below.
+
 Wrapper does: write a **self-contained** Codex prompt → Bash `codex …` (long timeout or background+poll) → return exit status, report path, summary. No invented results.
 
 ```text
 You are a thin Codex launcher. Do not solve the task yourself.
-1. Self-contained prompt: cwd, goal, constraints, scope, done criteria.
+1. Self-contained prompt: cwd, goal, constraints, scope, done criteria; for code changes, existing behavior/invariants to preserve and regression checks.
 2. Run Codex via Bash (timeout often >10m; or background and poll report).
-3. Return exit status, report path, summary of findings/changes.
+3. Return exit status, report path, summary of findings/changes and test evidence (commands, results, unrun checks).
 ```
 
 ## Commands
 
 ```bash
 # Implement / computer-use (writable)
-codex exec -m gpt-6.1-sol -s workspace-write -C "$PWD" -o /tmp/codex-report.md --ephemeral "<PROMPT>" </dev/null
+codex exec -m gpt-6.1-sol -c 'model_reasoning_effort="medium"' -s workspace-write -C "$PWD" -o /tmp/codex-report.md --ephemeral "<PROMPT>" </dev/null
 
 # Investigate / ad-hoc review (read-only)
-codex exec -m gpt-6.1-sol -s read-only -C "$PWD" -o /tmp/codex-report.md --ephemeral "<PROMPT>" </dev/null
+codex exec -m gpt-6.1-sol -c 'model_reasoning_effort="medium"' -s read-only -C "$PWD" -o /tmp/codex-report.md --ephemeral "<PROMPT>" </dev/null
 
 # Built-in review (no -m/-o/--ephemeral - use -c + stdout)
-codex review --uncommitted -c model="gpt-6.1-sol" > /tmp/codex-report.md
-codex review --base main -c model="gpt-6.1-sol" > /tmp/codex-report.md
+codex review --uncommitted -c 'model="gpt-6.1-sol"' -c 'model_reasoning_effort="medium"' > /tmp/codex-report.md
+codex review --base main -c 'model="gpt-6.1-sol"' -c 'model_reasoning_effort="medium"' > /tmp/codex-report.md
 ```
 
 | Mode | Model | Sandbox / cmd |
@@ -56,6 +59,20 @@ codex review --base main -c model="gpt-6.1-sol" > /tmp/codex-report.md
 | Bulk/mechanical impl | `gpt-6-luna` | `workspace-write` |
 | Harder impl / computer-use | `gpt-6.1-sol` | `workspace-write` |
 | Review / investigate | `gpt-6.1-sol` | `read-only` or `codex review` |
+
+## Reasoning and regression checks
+
+Use explicit `medium` reasoning effort for routine work unless the caller specifies
+otherwise. Choose `high` for difficult debugging, ambiguous requirements or changes
+spanning several components; use `xhigh` when supported and the problem warrants it.
+After a failed attempt, inspect the failure and refine the prompt before escalating.
+Change `model_reasoning_effort` in the command; model selection remains separate.
+
+For code changes, include the existing behavior and invariants to preserve, allowing
+only the requested behavior to change. Ask for a focused regression check that
+reproduces a bug before the fix and passes afterward where feasible, plus relevant
+existing tests. Require commands and outcomes in the report, and disclose checks
+that could not run. For investigation or review, report evidence without editing.
 
 ## Gotchas
 

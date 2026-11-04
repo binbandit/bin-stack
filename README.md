@@ -40,6 +40,7 @@ That links each skill directory into the harness roots you already have (`~/.age
 | [`bro`](skills/bro/SKILL.md) | Restate the last message in plain language |
 | [`verify`](skills/verify/SKILL.md) | Prove a behavior change on the user surface with revision-bound evidence |
 | [`review`](skills/review/SKILL.md) | Filter adversarial findings by reachable failure and concrete evidence |
+| [`unslop`](skills/unslop/SKILL.md) | Cut AI tells from writing while preserving meaning and tone |
 | [`anatomy`](skills/anatomy/SKILL.md) | Build detailed, interactive isometric illustrations that explain technical ideas as physical machines |
 | [`use-codex`](skills/use-codex/SKILL.md) | Hand work to GPT through the Codex CLI (`codex exec` / `codex review`), via a thin wrapper agent in Claude Code |
 
@@ -86,6 +87,7 @@ skills/
   bro/SKILL.md
   verify/SKILL.md
   review/SKILL.md
+  unslop/         # SKILL.md, SOURCE.md, and LICENSE-pstack
   anatomy/        # SKILL.md, kit, references, examples, and helper scripts
   use-codex/SKILL.md
 mods/
@@ -118,3 +120,5 @@ MIT
 The `verify` and `review` skills adapt selected pstack guidance by Lauren Tan at revision `9f451cf875ad1239912762f67741e8e5ba6ac0f1`. Each skill bundles its provenance and the original MIT notice in `LICENSE-pstack` so attribution travels with individual skill installs.
 
 The `anatomy` skill is imported from [wheresryan22/anatomy](https://github.com/wheresryan22/anatomy) at revision `689dcf966e63d92be10a5d593c6e19e10acd4422`. Its [source notes](skills/anatomy/SOURCE.md) and original [MIT license](skills/anatomy/LICENSE) travel with individual skill installs.
+
+The `unslop` skill is imported unchanged from [pstack](https://github.com/cursor/plugins/tree/180939f9e59cc9512e9330649175763e81fad16f/pstack) at revision `180939f9e59cc9512e9330649175763e81fad16f`. Its [source notes](skills/unslop/SOURCE.md) and original [MIT notice](skills/unslop/LICENSE-pstack), copyright 2026 Lauren Tan, travel with individual installs. It preserves upstream's `disable-model-invocation` frontmatter extension; harnesses that support it require explicit invocation.
