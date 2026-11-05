@@ -3,7 +3,7 @@
 # Edit once under skills/; every linked harness sees the same files.
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+ROOT="$(cd "$(dirname "$0")/.." && /bin/pwd -P)"
 SKILLS_DIR="$ROOT/skills"
 
 if [[ ! -d "$SKILLS_DIR" ]]; then
