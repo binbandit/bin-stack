@@ -1,0 +1,4 @@
+# Herdr (skills/herdr): Codex's workspace-write sandbox cannot reach herdr-core's
+# socket, so every `hc` call would need approval. This runs `hc` outside the
+# sandbox without asking, which includes `hc run` and `hc exec`.
+prefix_rule(pattern = ["hc"], decision = "allow")

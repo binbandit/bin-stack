@@ -41,3 +41,7 @@ Mod code carries no comments. Names and structure carry the meaning; if code nee
 ## Linking locally
 
 `./scripts/link-skills.sh` symlinks every skill directory into discovered user-level harness skill roots. Re-run after adding a skill.
+
+`./scripts/install-codex-rules.sh` copies `codex/rules/*.rules` into `~/.codex/rules/` as `bin-stack-<name>.rules` (Codex skips symlinked rule files). Re-run after changing a rule. A rule lets Codex skip its sandbox and approval for matching commands, so keep each one as narrow as the skill that needs it, and list it in the README's Codex rules table.
+
+`./scripts/install-agents-md.sh <name> <file>` adds `agents-md/<name>.md` to an instructions file between `<!-- BEGIN bin-stack:<name> -->` / `<!-- END bin-stack:<name> -->` markers, replacing that block in place when it exists. Snippets are short, always-on rules that pair with a skill; keep the details in the skill. Write them for any user (no personal names) and list them in the README's AGENTS.md snippets table.

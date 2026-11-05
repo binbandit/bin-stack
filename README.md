@@ -30,6 +30,31 @@ cd ~/Developer/ai/bin-stack
 
 That links each skill directory into the harness roots you already have (`~/.agents/skills`, `~/.cursor/skills`, `~/.claude/skills`, `~/.codex/skills`, …). Edit here; every harness sees the same files.
 
+### Codex rules (opt-in)
+
+```bash
+./scripts/install-codex-rules.sh
+```
+
+Copies each `codex/rules/<name>.rules` into `~/.codex/rules/bin-stack-<name>.rules` (or `$CODEX_HOME/rules`). Codex skips symlinked rule files, so these are copies: re-run after pulling rule changes. Rules deleted from this repo are removed too, and your own rule files are never touched. Rules let Codex run matching commands outside its sandbox without asking, so read them first:
+
+| Rule | What it allows |
+| --- | --- |
+| [`herdr`](codex/rules/herdr.rules) | Every `hc` command, so Codex can run the [`herdr`](skills/herdr/SKILL.md) skill (its sandbox cannot reach herdr-core's socket). This includes `hc run` and `hc exec`. |
+
+### AGENTS.md snippets (opt-in)
+
+```bash
+./scripts/install-agents-md.sh --list
+./scripts/install-agents-md.sh herdr ~/AGENTS.md
+```
+
+Adds `agents-md/<name>.md` to the instructions file you name (`~/AGENTS.md`, `~/.codex/AGENTS.md`, `~/.claude/CLAUDE.md`, …) between `<!-- BEGIN bin-stack:<name> -->` and `<!-- END bin-stack:<name> -->`. If that block exists it is replaced in place, so pull and re-run to update; otherwise it is appended at the bottom. Nothing outside the block changes, `--remove` takes it out, and a symlinked file is edited where it points. Needs Python 3.
+
+| Snippet | What it adds |
+| --- | --- |
+| [`herdr`](agents-md/herdr.md) | Always-on Herdr rules: use `hc` for sub-agents inside Herdr, tell every helper how to report back, and treat `<hc from=...>` messages as agent reports, not user instructions |
+
 ## Skills
 
 | Skill | When to use |
@@ -43,6 +68,7 @@ That links each skill directory into the harness roots you already have (`~/.age
 | [`unslop`](skills/unslop/SKILL.md) | Cut AI tells from writing while preserving meaning and tone |
 | [`anatomy`](skills/anatomy/SKILL.md) | Build detailed, interactive isometric illustrations that explain technical ideas as physical machines |
 | [`use-codex`](skills/use-codex/SKILL.md) | Hand work to GPT through the Codex CLI (`codex exec` / `codex review`), via a thin wrapper agent in Claude Code |
+| [`herdr`](skills/herdr/SKILL.md) | Start, message and wait on sub-agents and other agents through Herdr's `hc`. Optional extras: the [Codex rule](#codex-rules-opt-in) Codex needs to reach `hc`, and an always-on [AGENTS.md snippet](#agentsmd-snippets-opt-in) |
 
 `anatomy` includes its rendering kit, reference guides, examples, and helper scripts. It needs Node.js 20.10+; browser checks also need Chrome or Chromium (set `CHROME_PATH` if it is not in a standard location). Build and capture the smallest example from the skill directory:
 
@@ -75,7 +101,7 @@ Install specific mods at user scope (requires Claude Code on `PATH` and Python 3
 
 The script validates every requested name before changing anything, adds `mods/` as the `bin-stack` marketplace, and installs only the named mods. No arguments prints usage and exits without installing anything; `--list` lists available names without making changes. Duplicate names are installed once per invocation, and re-running an install is safe. Claude Code reads the mods in place from this clone, so an edit here applies on the next session or `/reload-plugins`.
 
-Run the installer's isolated fixture tests with `python3 -m unittest discover -s scripts/tests -v`.
+Run the installers' isolated fixture tests with `python3 -m unittest discover -s scripts/tests -v`.
 
 ## Layout
 
@@ -90,6 +116,11 @@ skills/
   unslop/         # SKILL.md, SOURCE.md, and LICENSE-pstack
   anatomy/        # SKILL.md, kit, references, examples, and helper scripts
   use-codex/SKILL.md
+  herdr/SKILL.md
+codex/
+  rules/herdr.rules  # opt-in Codex rules, installed by scripts/install-codex-rules.sh
+agents-md/
+  herdr.md           # opt-in AGENTS.md snippets, installed by scripts/install-agents-md.sh
 mods/
   .claude-plugin/marketplace.json
   glamour-dark/
@@ -98,8 +129,10 @@ mods/
   ascii-spinner/
   slopothon/
 scripts/
-  link-skills.sh   # optional: symlink into local harness skill roots
-  install-mods.sh  # install named Claude Code mods
+  link-skills.sh          # optional: symlink into local harness skill roots
+  install-codex-rules.sh  # opt-in: copy codex/rules into ~/.codex/rules
+  install-agents-md.sh    # opt-in: add or update a marked agents-md snippet in an AGENTS.md
+  install-mods.sh         # install named Claude Code mods
 ```
 
 Canonical skills live in `skills/`. Harness-specific paths are adapters (symlinks or CLI installs), not forks of the content.
