@@ -86,8 +86,7 @@ Claude Code mods: plugins of function hooks that change how Claude Code looks an
 
 | Mod | What it does |
 | --- | --- |
-| [`glamour-dark`](mods/glamour-dark) | Draws replies as rich markdown in glamour's dark style, one sentence per line |
-| [`redact-secrets`](mods/redact-secrets) | Swaps secrets for placeholders before Claude reads them or the session logs them; Write and Edit put the real values back |
+| [`glamour-dark`](mods/glamour-dark) | Draws replies as rich markdown in glamour's dark style, one sentence per line, with tables as aligned markdown pipe tables that copy and paste intact |
 | [`tool-lines`](mods/tool-lines) | Draws each tool call as one compact line; click a call to open its result, click it again to close it |
 | [`ascii-spinner`](mods/ascii-spinner) | Swaps the working line (verb, timer, tokens, effort, tip) for a one-row WEAVEworm rethreading synthsilk, in Sekiguchi colors |
 | [`slopothon`](mods/slopothon) | Paints a SLOPOTHON lockup over the Claude logo: block wordmark, a dot-matrix card naming the model and branch, and a livery strip with a tagline and barcode per session. Fullscreen (`"tui": "fullscreen"`) only; it starts each session with a `/slopothon` row and the logo shows for ~130ms first. Type `/slopothon` to redraw it inline |
@@ -124,7 +123,6 @@ agents-md/
 mods/
   .claude-plugin/marketplace.json
   glamour-dark/
-  redact-secrets/
   tool-lines/
   ascii-spinner/
   slopothon/

@@ -1,6 +1,6 @@
 ---
 name: herdr
-description: "Coordinate agents and programs through Herdr's herdr-core CLI (`hc`). Use when running inside Herdr ($HC_TERMINAL_ID is set) and you need to start sub-agents (Claude Code, Codex, Pi), delegate or parallelize work, message, steer or wait on another agent, read another terminal's screen, or keep a slow command from blocking you. Also use when you receive an `<hc from=...>` message, or when asked to change what the Herdr window shows."
+description: "Coordinate agents and programs through Herdr's herdr-core CLI (`hc`). Use when running inside Herdr ($HC_TERMINAL_ID is set) and you need to start sub-agents (Claude Code, Codex, Pi), delegate or parallelize work, message, steer or wait on another agent, read another terminal's screen, or keep a slow command from blocking you, or when asked to change what the Herdr window shows. Not needed just to report back or reply with `hc send`."
 ---
 
 # Herdr
@@ -10,8 +10,9 @@ terminal and agent and keeps them alive. Agents you start with `hc run` are your
 children: they show in Herdr's agents list under your tab, so the user can
 watch and steer them.
 
-The installed binaries are the authority. Read the current manual before your
-first `hc` command in a session:
+This page covers starting, waiting on, messaging and cleaning up agents. The
+installed binaries are the authority, but their manuals are long: read them
+only for anything else, or when a command here fails.
 
 ```sh
 hc --skill          # running, messaging, waiting on and cleaning up agents and programs
@@ -29,6 +30,17 @@ different program. Do not use it for this.
   the work is visible and steerable. The usual ceremony rules still apply: no
   helpers for single-pass work, and ask before starting a swarm.
 
+## Keep it cheap
+
+- Each sub-agent starts with its own context and uses tokens. Delegate work
+  that is big or worth watching; do quick lookups yourself.
+- Pick the cheapest model that fits: `claude --model sonnet` for routine work,
+  the strongest model only when the task needs it.
+- Children do not need this skill. The report line in their task is all they
+  use `hc` for.
+- Ask for short reports, or a file path for long ones, and keep `hc read
+  --lines` small.
+
 ## Start a sub-agent
 
 Put the task in `hc run`, give it a name and an exact scope, and always tell it
@@ -39,17 +51,23 @@ without that line it answers in its own transcript and you never hear about it.
 hc run --bg --name review --cwd "$PWD" claude --model sonnet \
   "Review src/x.rs only. Read-only; no sub-agents. Report findings with: hc send $HC_TERMINAL_ID \"<findings or path to a file>\" when done or stuck."
 
-hc run --bg --name impl --cwd "$PWD" codex --no-daemon \
+hc run --bg --name impl --cwd "$PWD" codex --no-daemon -a never -s workspace-write \
+  -c sandbox_workspace_write.network_access=true \
   "Fix the failing test in x.rs; touch no other files; no sub-agents. Report with: hc send $HC_TERMINAL_ID \"<result>\" when done or stuck."
 ```
 
 - Claude Code: `claude [--model M] "task"`.
-- Codex: always `codex --no-daemon [-m M] [-c model_reasoning_effort=E] "task"`.
-  Without `--no-daemon` its commands run outside hc.
+- Codex: always `codex --no-daemon -a never -s workspace-write -c
+  sandbox_workspace_write.network_access=true [-m M] [-c
+  model_reasoning_effort=E] "task"` (`-s read-only` to review or investigate).
+  Without `--no-daemon` its commands run outside hc. Without `-a never` it
+  stops at approval prompts nobody is watching, network fetches included; with
+  it, blocked commands fail back to Codex instead.
 - Pi: launch, `hc wait`, then `hc send` the task (see `hc --skill`).
 - Launch in your own folder (`--cwd "$PWD"`) or another folder the agent
   already trusts. In a new folder (`/tmp`, a fresh checkout) Claude Code and
-  Codex stop at a trust dialog without reporting any status.
+  Codex stop at a trust dialog without reporting any status. Claude Code never
+  remembers trust for the home folder, so do not start Claude children in `~`.
 - Check `hc templates` first; a template that fits beats a hand-written role.
 - Run agents interactively, never in one-shot print modes (`-p`, `exec`).
 - When several children edit in parallel, give each its own files up front.

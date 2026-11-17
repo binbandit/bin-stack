@@ -280,14 +280,43 @@ function aligned(line: Line, width: number, align: Align, paint: Paint): Line {
   return [...pad(before), ...line, ...pad(room - before)]
 }
 
-function shrinkWidestColumnsToFit(natural: number[], room: number): number[] {
-  const widths = [...natural]
-  while (widths.reduce((sum, w) => sum + w, 0) > room) {
-    const widest = widths.indexOf(Math.max(...widths))
-    if ((widths[widest] ?? 0) <= MIN_COLUMN_WIDTH) break
-    widths[widest] = (widths[widest] ?? 0) - 1
-  }
-  return widths
+function asMarkdownCell(spans: Span[]): Span[] {
+  return spans.map(span => ({
+    ...span,
+    text: span.text.replaceAll(NO_BREAK_SPACE, ' ').replaceAll('\\', '\\\\').replaceAll('|', '\\|').replace(/\r?\n/g, '<br>'),
+  }))
+}
+
+function delimiterOf(align: Align, width: number): string {
+  const opens = align === 'left' || align === 'center'
+  const closes = align === 'right' || align === 'center'
+  return (opens ? ':' : '') + '-'.repeat(width - Number(opens) - Number(closes)) + (closes ? ':' : '')
+}
+
+const PIPE_ROW_EDGE_CELLS = 1
+const PIPE_CELL_FRAME_CELLS = 3
+
+function pipeRowCells(widths: number[]): number {
+  return widths.reduce((sum, width) => sum + width + PIPE_CELL_FRAME_CELLS, PIPE_ROW_EDGE_CELLS)
+}
+
+function pipeRow(cells: Span[][], widths: number[], align: Align[], paint: Paint, border: Paint): Line {
+  return [
+    { text: '|', paint: border },
+    ...widths.flatMap((width, c): Line => [
+      { text: ' ', paint },
+      ...aligned(cells[c] ?? [], width, align[c] ?? 'none', paint),
+      { text: ' ', paint },
+      { text: '|', paint: border },
+    ]),
+  ]
+}
+
+function compactPipeRow(cells: Span[][], count: number, border: Paint): Line {
+  return [
+    { text: '|', paint: border },
+    ...Array.from({ length: count }, (_, c): Line => [...(cells[c] ?? []), { text: '|', paint: border }]).flat(),
+  ]
 }
 
 const BLOCK_DRAWERS: { [K in Block['kind']]: BlockDrawer<K> } = {
@@ -340,28 +369,16 @@ const BLOCK_DRAWERS: { [K in Block['kind']]: BlockDrawer<K> } = {
   table: (block, context) => {
     const { style } = context
     const paint = cascade(context.paint, style.table)
-    const head = block.head.map(cell => inlineSpans(cell, paint, style))
-    const rows = block.rows.map(row => row.map(cell => inlineSpans(cell, paint, style)))
-    const natural = block.align.map((_, c) => Math.max(1, ...[head, ...rows].map(row => spansCells(row[c] ?? []))))
-    const columnCount = block.align.length
-    const cellPaddingCells = columnCount * 2
-    const separatorCells = columnCount - 1
-    const widths = shrinkWidestColumnsToFit(natural, context.width - cellPaddingCells - separatorCells)
-    const separator = style.table.column_separator ?? '│'
-    const rowLines = (cells: Span[][]): Line[] => {
-      const wrapped = widths.map((width, c) => wrap(cells[c] ?? [], width))
-      const height = Math.max(...wrapped.map(lines => lines.length))
-      return Array.from({ length: height }, (_, r) =>
-        widths.flatMap((width, c): Line => [
-          ...(c > 0 ? [{ text: separator, paint }] : []),
-          { text: ' ', paint },
-          ...aligned(wrapped[c]?.[r] ?? [], width, block.align[c] ?? 'none', paint),
-          { text: ' ', paint },
-        ]),
-      )
-    }
-    const rule = widths.map(width => (style.table.row_separator ?? '─').repeat(width + 2)).join(style.table.center_separator ?? '┼')
-    return [...rowLines(head), [{ text: rule, paint }], ...rows.flatMap(rowLines)]
+    const border = { ...paint, dimColor: true }
+    const head = block.head.map(cell => asMarkdownCell(inlineSpans(cell, paint, style)))
+    const rows = block.rows.map(row => row.map(cell => asMarkdownCell(inlineSpans(cell, paint, style))))
+    const widths = block.align.map((_, c) => Math.max(MIN_COLUMN_WIDTH, ...[head, ...rows].map(row => spansCells(row[c] ?? []))))
+    const compact = pipeRowCells(widths) > context.width
+    const delimiters = block.align.map((align, c) => [{ text: delimiterOf(align, compact ? MIN_COLUMN_WIDTH : widths[c] ?? MIN_COLUMN_WIDTH), paint: border }])
+    const draw = (cells: Span[][]) => compact
+      ? compactPipeRow(cells, block.align.length, border)
+      : pipeRow(cells, widths, block.align, paint, border)
+    return [draw(head), draw(delimiters), ...rows.map(draw)]
   },
 }
 

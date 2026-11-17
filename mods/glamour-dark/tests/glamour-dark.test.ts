@@ -1,6 +1,8 @@
 import type { RenderElement } from 'claude-code'
 import { expect, test, type TestBody } from 'claude-code/testing'
 import { parse } from '../hooks/markdown'
+import { layout } from '../hooks/layout'
+import { DARK } from '../hooks/style'
 
 type Engine = Parameters<TestBody>[0]
 type Drawn = { type: string; props?: Record<string, unknown>; children?: unknown[] }
@@ -155,9 +157,9 @@ test('draws a code block of an unknown language in the plain chroma text color',
   expect(spanWith(root, 'plain words')?.props).toMatchObject({ color: '#C4C4C4', backgroundColor: '#373737' })
 })
 
-test('lays a table out with inner borders only', async $ => {
+test('lays a table out as aligned Markdown pipes', async $ => {
   const rows = await rowsOf($, '| Name | Qty |\n| :--- | ---: |\n| apple | 3 |\n| kiwi | 12 |')
-  expect(rows).toEqual(['   Name  │ Qty', '  ───────┼─────', '   apple │   3', '   kiwi  │  12'])
+  expect(rows).toEqual(['  | Name  | Qty |', '  | :---- | --: |', '  | apple |   3 |', '  | kiwi  |  12 |'])
 })
 
 test("leaves summaries and other surfaces to the engine", async ($, on) => {
@@ -202,4 +204,30 @@ test('splits sentences in list items and quotes, hanging under the text', async 
 
 test('leaves headings on one line', async $ => {
   expect(await rowsOf($, '## Step one. Then two')).toEqual(['  ## Step one. Then two'])
+})
+
+
+test('keeps all four Markdown table alignments when copied', async () => {
+  const source = '| Left | Center | Right | None |\n| :--- | :---: | ---: | --- |\n| one | two | three | four |'
+  const copied = layout(parse(source), DARK, 100).map(line => line.map(span => span.text).join('').trim()).join('\n')
+  const table = parse(copied)[0]
+  expect(table?.kind).toBe('table')
+  if (table?.kind === 'table') expect(table.align).toEqual(['left', 'center', 'right', 'none'])
+})
+
+test('escapes literal pipes and converts no-break spaces in table cells', async () => {
+  const lines = layout([{
+    kind: 'table', head: [[{ kind: 'text', text: 'Value' }]], align: ['none'],
+    rows: [[[{ kind: 'text', text: 'a|b c' }]]],
+  }], DARK, 80).map(line => line.map(span => span.text).join('').trim())
+  expect(lines[2]).toBe('| a\\|b c |')
+})
+
+test('uses compact intact pipe rows rather than wrapping wide cell values', async () => {
+  const source = '| Name | Qty |\n| :--- | ---: |\n| a very long name | 12 |'
+  const lines = layout(parse(source), DARK, 15).map(line => line.map(span => span.text).join('').trim())
+  expect(lines).toEqual(['|Name|Qty|', '|:--|--:|', '|a very long name|12|'])
+  const table = parse(lines.join('\n'))[0]
+  expect(table?.kind).toBe('table')
+  if (table?.kind === 'table') expect(table.rows.length).toBe(1)
 })

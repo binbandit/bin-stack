@@ -1,5 +1,0 @@
-{
-  "name": "redact-secrets",
-  "version": "0.1.0",
-  "description": "Redacts secrets from what Claude reads and from what the session logs"
-}
