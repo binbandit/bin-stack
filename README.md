@@ -69,6 +69,7 @@ Adds `agents-md/<name>.md` to the instructions file you name (`~/AGENTS.md`, `~/
 | [`anatomy`](skills/anatomy/SKILL.md) | Build detailed, interactive isometric illustrations that explain technical ideas as physical machines |
 | [`use-codex`](skills/use-codex/SKILL.md) | Hand work to GPT through the Codex CLI (`codex exec` / `codex review`), via a thin wrapper agent in Claude Code |
 | [`herdr`](skills/herdr/SKILL.md) | Start, message and wait on sub-agents and other agents through Herdr's `hc`. Optional extras: the [Codex rule](#codex-rules-opt-in) Codex needs to reach `hc`, and an always-on [AGENTS.md snippet](#agentsmd-snippets-opt-in) |
+| [`summarize-pr`](skills/summarize-pr/SKILL.md) | Build a one-page PR walkthrough that shows only the code a reviewer must judge, with the why next to it |
 
 `anatomy` includes its rendering kit, reference guides, examples, and helper scripts. It needs Node.js 20.10+; browser checks also need Chrome or Chromium (set `CHROME_PATH` if it is not in a standard location). Build and capture the smallest example from the skill directory:
 
@@ -116,6 +117,7 @@ skills/
   anatomy/        # SKILL.md, kit, references, examples, and helper scripts
   use-codex/SKILL.md
   herdr/SKILL.md
+  summarize-pr/   # SKILL.md and SOURCE.md
 codex/
   rules/herdr.rules  # opt-in Codex rules, installed by scripts/install-codex-rules.sh
 agents-md/
